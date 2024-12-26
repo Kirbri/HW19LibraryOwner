@@ -10,7 +10,9 @@ import static specs.GeneralSpec.responseSpecification200;
 
 public class AuthorizationApi {
 
-    public LoginResponseModel login(GenerateTokenLoginRequestModel authData) {
+    public LoginResponseModel login() {
+        GenerateTokenLoginRequestModel authData = new GenerateTokenLoginRequestModel();
+
         return step("Make Login", () ->
                 given(requestSpecification)
                         .body(authData)

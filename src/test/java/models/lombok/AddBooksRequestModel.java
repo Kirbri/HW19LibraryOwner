@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.HashSet;
 
 @Data
-public class BookRequestModel {
+public class AddBooksRequestModel {
 
    // {"userId":"%s","collectionOfIsbns":[{"isbn":"%s"},{"isbn":"%s"}]}
 
