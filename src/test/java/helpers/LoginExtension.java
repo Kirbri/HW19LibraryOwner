@@ -1,36 +1,25 @@
 package helpers;
 
 import api.AuthorizationApi;
-import com.demoqa.tests.TestData;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.openqa.selenium.Cookie;
+import pages.AuthorizationPage;
+import pages.ProfilePage;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static com.demoqa.tests.TestData.loginResponseLombokModel;
-import static io.qameta.allure.Allure.step;
+import static tests.TestData.loginResponseLombokModel;
 
 public class LoginExtension implements BeforeEachCallback {
+    final AuthorizationPage authorizationPage = new AuthorizationPage();
+    final ProfilePage profilePage = new ProfilePage();
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
 
         AuthorizationApi authorizationApi = new AuthorizationApi();
         loginResponseLombokModel = authorizationApi.login();
 
-        step("Add cookie", () -> {
-                    open("/favicon.ico");
-                    getWebDriver().manage().addCookie(new Cookie("userID", loginResponseLombokModel.getUserId()));
-                    getWebDriver().manage().addCookie(new Cookie("token", loginResponseLombokModel.getToken()));
-                    getWebDriver().manage().addCookie(new Cookie("expires", loginResponseLombokModel.getExpires()));
-                });
+        authorizationPage.addCookieUIPage(loginResponseLombokModel);
+        profilePage.openProfile();
 
-        step("Check login on profile", () -> {
-            open("/profile");
-            $("#userName-value").shouldHave(text(TestData.getLogin()));
-        });
     }
 }

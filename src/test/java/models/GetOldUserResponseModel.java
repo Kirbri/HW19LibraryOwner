@@ -1,11 +1,11 @@
-package models.lombok;
+package models;
 
 import lombok.Data;
 
 import java.util.HashSet;
 
 @Data
-public class GetCreateNewUserResponseModel {
+public class GetOldUserResponseModel {
     String userId, username;
     HashSet<Books> books;
 }

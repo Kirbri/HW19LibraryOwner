@@ -1,7 +1,7 @@
-package com.demoqa.tests;
+package tests;
 
 import lombok.Getter;
-import models.lombok.LoginResponseModel;
+import models.LoginResponseModel;
 
 import java.util.Map;
 
@@ -9,7 +9,8 @@ public class TestData {
 
     @Getter
     public static String login = System.getProperty("login"),
-            password = System.getProperty("password");
+            password = System.getProperty("password"),
+            randomBookTitle, randomBookIsbn;
 
     public static LoginResponseModel loginResponseLombokModel;
 

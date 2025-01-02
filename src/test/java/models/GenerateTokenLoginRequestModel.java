@@ -1,7 +1,7 @@
-package models.lombok;
+package models;
 
-import com.demoqa.tests.TestData;
 import lombok.Data;
+import tests.TestData;
 
 @Data
 public class GenerateTokenLoginRequestModel {

@@ -12,34 +12,28 @@ import static io.restassured.http.ContentType.JSON;
 public class GeneralSpec {
     public static final RequestSpecification requestSpecification = with()
             .filter(CustomAllureListener.withCustomTemplates())
+            .header("accept", "application/json")
+            .header("Content-Type", "application/json")
             .log().all()
             .contentType(JSON);
 
     public static final ResponseSpecification responseSpecification200 = new ResponseSpecBuilder()
             .expectStatusCode(200)
-            .log(STATUS)
-            .log(BODY)
+            .log(ALL)
             .build();
 
     public static final ResponseSpecification responseSpecification201 = new ResponseSpecBuilder()
             .expectStatusCode(201)
-            .log(STATUS)
-            .log(BODY)
+            .log(ALL)
             .build();
 
     public static final ResponseSpecification responseSpecification204 = new ResponseSpecBuilder()
             .expectStatusCode(204)
-            .log(STATUS)
-            .log(BODY)
-            .log(HEADERS)
             .log(ALL)
             .build();
 
     public static final ResponseSpecification responseSpecification400 = new ResponseSpecBuilder()
             .expectStatusCode(400)
-            .log(STATUS)
-            .log(BODY)
-            .log(HEADERS)
             .log(ALL)
             .build();
 }

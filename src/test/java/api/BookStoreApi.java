@@ -1,107 +1,117 @@
 package api;
 
-import models.lombok.*;
+import io.qameta.allure.Step;
+import models.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Random;
 
-import static com.demoqa.tests.TestData.*;
-import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static specs.GeneralSpec.*;
+import static tests.TestData.*;
 
 public class BookStoreApi {
+    final AccountApi accountApi = new AccountApi();
 
+    @Step("Delete all book")
     public void deleteAllBook() {
-        step("Delete all book", () -> given(requestSpecification)
+        accountApi.getInfoAccount();
+        given(requestSpecification)
                 .header("Authorization", "Bearer " + loginResponseLombokModel.getToken())
                 .queryParams("UserId", loginResponseLombokModel.getUserId())
                 .when()
                 .delete("/BookStore/v1/Books")
                 .then()
-                .spec(responseSpecification204));
+                .spec(responseSpecification204);
     }
 
-    public GetAllBooksResponseModel getAllBooks() {
-        GetAllBooksResponseModel responseModel = step("Get info about all books", () -> given(requestSpecification)
+    @Step("Get info about all books")
+    private GetAllBooksResponseModel getAllBooks() {
+        GetAllBooksResponseModel responseModel = given(requestSpecification)
                 .when()
                 .get("/BookStore/v1/Books")
                 .then()
                 .spec(responseSpecification200)
-                .extract().as(GetAllBooksResponseModel.class));
+                .extract().as(GetAllBooksResponseModel.class);
         sizeAllBooksCollection = responseModel.getBooks().size();
         allBooksIsbnTitle = new HashMap<>(sizeAllBooksCollection);
         for (Books books : responseModel.getBooks()) {
-            System.out.println(books.getIsbn());
             allBooksIsbnTitle.put(books.getIsbn(), books.getTitle());
         }
-        System.out.println(allBooksIsbnTitle);
         return responseModel;
     }
 
+    @Step("Add {countOfBooks}  books")
     public void addBooks() {
+        getAllBooks();
         int countOfBooks = new Random().nextInt(sizeAllBooksCollection + 1) + 1;
         HashSet<IsbnRequestModel> isbnSet = new HashSet<>(countOfBooks);
         IsbnRequestModel isbnRequestMode;
-        System.out.println(countOfBooks);
         int count = 0;
-            for (String key : allBooksIsbnTitle.keySet()) {
-                count++;
-                if (count > countOfBooks) {
-                    break;
-                }
-                isbnRequestMode = new IsbnRequestModel(key);
-                isbnSet.add(isbnRequestMode);
+        for (String key : allBooksIsbnTitle.keySet()) {
+            count++;
+            if (count > countOfBooks) {
+                break;
             }
+            isbnRequestMode = new IsbnRequestModel(key);
+            isbnSet.add(isbnRequestMode);
+        }
 
         AddBooksRequestModel bookRequestModel = new AddBooksRequestModel();
         bookRequestModel.setUserId(loginResponseLombokModel.getUserId());
         bookRequestModel.setCollectionOfIsbns(isbnSet);
 
-        step("Add " + countOfBooks + "books", () -> given(requestSpecification)
+        given(requestSpecification)
                 .header("Authorization", "Bearer " + loginResponseLombokModel.getToken())
                 .body(bookRequestModel)
                 .when()
                 .post("/BookStore/v1/Books")
                 .then()
-                .spec(responseSpecification201));
+                .spec(responseSpecification201);
     }
 
-    public GetCreateNewUserResponseModel replaceBookInAccount(String isbn) {
+    @Step("Replace one book")
+    public CreateNewUserResponseModel replaceBookInAccount(String isbn) {
 
         DeleteReplaceBookRequestModel deleteReplaceBookRequestModel = new DeleteReplaceBookRequestModel();
         deleteReplaceBookRequestModel.setUserId(loginResponseLombokModel.getUserId());
         deleteReplaceBookRequestModel.setIsbn(isbn);
 
-        return step("Replace one book", () -> given(requestSpecification)
-                .header("accept", "application/json")
-                .header("Content-Type", "application/json")
+        return given(requestSpecification)
                 .header("Authorization", "Bearer " + loginResponseLombokModel.getToken())
                 .body(deleteReplaceBookRequestModel)
                 .when()
                 .put("/BookStore/v1/Books/" + isbn)//NEW ISBN
                 .then()
                 .spec(responseSpecification204)
-                .extract().as(GetCreateNewUserResponseModel.class));
+                .extract().as(CreateNewUserResponseModel.class);
     }
 
-
+    @Step("Get info about random book in all collection")
     public Books getInfoAboutBook() {
+        getAllBooks();
         int bookNumber = new Random().nextInt(allBooksIsbnTitle.size() + 1) + 1;
         String isbn = allBooksIsbnTitle.keySet().toArray()[new Random().nextInt(bookNumber)].toString();
 
-        return step("Get info about random book in all collection", () -> given(requestSpecification)
+        Books book = given(requestSpecification)
                 .queryParams("ISBN", isbn)
                 .when()
                 .get("/BookStore/v1/Book")
                 .then()
                 .spec(responseSpecification200)
-                .extract().as(Books.class));
+                .extract().as(Books.class);
+        randomBookTitle = book.getTitle();
+        randomBookIsbn = book.getIsbn();
+        return book;
     }
 
+    @Step("Delete random book in account")
     public void deleteOneBook() {
+        accountApi.getInfoAccount();
         int bookNumber = new Random().nextInt(sizeInProfileBooksCollection + 1) + 1;
         String isbn = "";
-            int count = 0;
+        int count = 0;
         for (String key : booksInProfileIsbnTitle.keySet()) {
             count++;
             if (count > bookNumber) {
@@ -114,14 +124,12 @@ public class BookStoreApi {
         deleteBookRequestModel.setUserId(loginResponseLombokModel.getUserId());
         deleteBookRequestModel.setIsbn(isbn);
 
-        step("Delete random book in account", () -> given(requestSpecification)
-                .header("accept", "application/json")
-                .header("Content-Type", "application/json")
+        given(requestSpecification)
                 .header("Authorization", "Bearer " + loginResponseLombokModel.getToken())
                 .body(deleteBookRequestModel)
                 .when()
                 .delete("/BookStore/v1/Book")
                 .then()
-                .spec(responseSpecification204));
+                .spec(responseSpecification204);
     }
 }
