@@ -3,8 +3,8 @@ package tests;
 import api.AccountApi;
 import api.AuthorizationApi;
 import api.BookStoreApi;
-import com.codeborne.selenide.Selenide;
 import helpers.WithLogin;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,12 +50,11 @@ public class CollectionTests extends TestBase {
                 .checkProfile()
                 .show10Rows()
                 .checkCountAndTitleOfBooks();
-
+        int countOfBooksBeforeDelete = sizeInProfileBooksCollection;
         booksApi.deleteOneBook();
 
-        Selenide.refresh();
-        profilePage.show10Rows()
-                .checksCountOfBookOnProfile("One");
+        accountApi.getInfoAccount();
+        Assertions.assertEquals(countOfBooksBeforeDelete - 1, sizeInProfileBooksCollection);
     }
 
     @Test
