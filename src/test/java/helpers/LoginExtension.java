@@ -19,7 +19,8 @@ public class LoginExtension implements BeforeEachCallback {
         loginResponseLombokModel = authorizationApi.login();
 
         authorizationPage.addCookieUIPage(loginResponseLombokModel);
-        profilePage.openProfile();
+        profilePage.openPageProfile();
+        profilePage.checkProfile();
 
     }
 }

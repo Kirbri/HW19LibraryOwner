@@ -32,11 +32,11 @@ public class CollectionTests extends TestBase {
         booksApi.deleteAllBook();
         booksApi.addBooks();
 
-        profilePage.openProfile()
+        profilePage.openPageProfile()
+                .checkProfile()
                 .show10Rows()
                 .checkCountAndTitleOfBooks();
     }
-
 
     @Test
     @WithLogin
@@ -46,7 +46,8 @@ public class CollectionTests extends TestBase {
         booksApi.deleteAllBook();
         booksApi.addBooks();
 
-        profilePage.openProfile()
+        profilePage.openPageProfile()
+                .checkProfile()
                 .show10Rows()
                 .checkCountAndTitleOfBooks();
 
@@ -64,7 +65,8 @@ public class CollectionTests extends TestBase {
         booksApi.deleteAllBook();
         booksApi.addBooks();
 
-        profilePage.openProfile()
+        profilePage.openPageProfile()
+                .checkProfile()
                 .checksBookOnProfile()
                 .deleteFirstBook()
                 .show10Rows()
@@ -78,7 +80,8 @@ public class CollectionTests extends TestBase {
         booksApi.deleteAllBook();
         booksApi.addBooks();
 
-        profilePage.openProfile()
+        profilePage.openPageProfile()
+                .checkProfile()
                 .deleteAllBooks()
                 .checksCountOfBookOnProfile("All");
     }
@@ -86,6 +89,7 @@ public class CollectionTests extends TestBase {
     @Test
     @DisplayName("Регистрация аккаунта")
     void createAccountTest() {
+
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
         login = "Login_" + currentDate + currentTime;

@@ -42,7 +42,7 @@ public class BookStoreApi {
         return responseModel;
     }
 
-    @Step("Add {countOfBooks}  books")
+    @Step("Add books")
     public void addBooks() {
         getAllBooks();
         int countOfBooks = new Random().nextInt(sizeAllBooksCollection + 1) + 1;

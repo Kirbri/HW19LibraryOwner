@@ -28,7 +28,8 @@ public class LoginTests extends TestBase {
 
         authorizationPage.addCookieUIPage(loginResponseLombokModel);
 
-        profilePage.openProfile();
+        profilePage.openPageProfile();
+        profilePage.checkProfile();
 
     }
 }

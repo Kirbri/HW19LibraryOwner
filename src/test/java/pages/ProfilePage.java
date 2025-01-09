@@ -30,9 +30,14 @@ public class ProfilePage {
     private final ElementsCollection reactTableDataOfBooks = $$(".ReactTable img"),
             reactTableTitleOfBooks = $$(".ReactTable .mr-2");
 
-    @Step("UI Open profile and check login")
-    public ProfilePage openProfile() {
+    @Step("UI Open profile")
+    public ProfilePage openPageProfile() {
         open("/profile");
+        return this;
+    }
+
+    @Step("UI Check login in profile")
+    public ProfilePage checkProfile() {
         userNameLogin.shouldHave(text(TestData.getLogin()));
         menuProfile.scrollTo().should(cssClass("active"));
         return this;

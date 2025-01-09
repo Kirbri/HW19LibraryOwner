@@ -21,11 +21,6 @@ public class TestBase {
 
     @BeforeAll
     public static void setUp() {
-        Configuration.pageLoadStrategy = "eager";//!
-        Configuration.browserSize = "1920x1080";
-        Configuration.timeout = 5000;
-        Configuration.baseUrl = "https://demoqa.com";
-        RestAssured.baseURI = "https://demoqa.com";
         RestAssured.defaultParser = Parser.JSON;
         Configuration.browserSize = System.getProperty("browserSize", "1920x1080");
         Configuration.browserVersion = System.getProperty("browserVersion", "126.0");
