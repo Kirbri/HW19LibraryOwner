@@ -13,7 +13,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.Map;
 
-import static com.codeborne.selenide.Configuration.browser;
+import static owner.config.WebDriverProvider.LOGIN_CONFIG;
+import static owner.config.WebDriverProvider.WEB_DRIVER_CONFIG;
 import static tests.TestData.login;
 import static tests.TestData.password;
 
@@ -21,34 +22,35 @@ public class TestBase {
 
     @BeforeAll
     public static void setUp() {
-        RestAssured.defaultParser = Parser.JSON;
-        Configuration.browserSize = System.getProperty("browserSize", "1920x1080");
-        Configuration.browserVersion = System.getProperty("browserVersion", "126.0");
-        browser = System.getProperty("browser", "chrome");
-        Configuration.baseUrl = "https://demoqa.com";
-        RestAssured.baseURI = "https://demoqa.com";
+        System.setProperty("browser", System.getProperty("browser"));
+        Configuration.browserSize = WEB_DRIVER_CONFIG.getBrowserWindowSize();
+        Configuration.browserVersion = WEB_DRIVER_CONFIG.getBrowserVersion();
+        Configuration.browser = WEB_DRIVER_CONFIG.getBrowser();
+        Configuration.baseUrl = WEB_DRIVER_CONFIG.getBaseUrl();
+        RestAssured.baseURI = WEB_DRIVER_CONFIG.getBaseUrl();
         RestAssured.defaultParser = Parser.JSON;
         Configuration.timeout = 10000;
-        Configuration.remote = "https://" + System.getProperty("loginRemote") + "@"
-                + System.getProperty("url", "selenoid.autotests.cloud") + "/wd/hub";
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("selenoid:options", Map.<String, Object>of(
-                "enableVNC", true,
-                "enableVideo", true
-        ));
-        Configuration.browserCapabilities = capabilities;
-
+        if(WEB_DRIVER_CONFIG.isRemote()) {
+            Configuration.remote = "https://" + WEB_DRIVER_CONFIG.getRemoteUser() + ":" +
+                    WEB_DRIVER_CONFIG.getRemotePassword() + "@" + WEB_DRIVER_CONFIG.getRemoteUrl() + "/wd/hub";
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setCapability("selenoid:options", Map.<String, Object>of(
+                    "enableVNC", true,
+                    "enableVideo", true
+            ));
+            Configuration.browserCapabilities = capabilities;
+        }
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
     }
 
     @AfterEach
     void afterEachCloseWebDriver() {
-        login = System.getProperty("login");
-        password = System.getProperty("password");
+        login = LOGIN_CONFIG.getProfileLogin();
+        password = LOGIN_CONFIG.getProfilePassword();
 
         Attach.screenshotAs("Last screenshot");
         Attach.pageSource();
-        if (browser.equals("chrome")) {
+        if (Configuration.browser.equals("chrome")) {
             Attach.browserConsoleLogs();
         }
         Attach.addVideo();

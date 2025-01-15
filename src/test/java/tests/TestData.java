@@ -5,11 +5,13 @@ import models.LoginResponseModel;
 
 import java.util.Map;
 
+import static owner.config.WebDriverProvider.LOGIN_CONFIG;
+
 public class TestData {
 
     @Getter
-    public static String login = System.getProperty("login"),
-            password = System.getProperty("password"),
+    public static String login = LOGIN_CONFIG.getProfileLogin(),
+            password = LOGIN_CONFIG.getProfilePassword(),
             randomBookTitle, randomBookIsbn;
 
     public static LoginResponseModel loginResponseLombokModel;
